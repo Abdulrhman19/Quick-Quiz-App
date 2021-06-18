@@ -1,8 +1,10 @@
 const question = document.getElementById("question");
 const choices = Array.from(document.getElementsByClassName("choice-text"));
+const questionCounterText = document.getElementById("questionCounter");
+const scoreText = document.getElementById("score");
 
 let currentQuestion = {};
-let acceptingAnswers = true;
+let acceptingAnswers = false;
 let score = 0;
 let questionCounter = 0;
 let availableQuestions = [];
@@ -53,6 +55,9 @@ getNewQuestion = () => {
         return window.location.assign("/end.html");
     }
     questionCounter++;
+
+    questionCounterText.innerText = `${questionCounter}/${questions.length}`
+
     const questionIndex = Math.floor(Math.random() * availableQuestions.length);
     currentQuestion = availableQuestions[questionIndex];
     question.innerText = currentQuestion.question;
@@ -66,6 +71,11 @@ getNewQuestion = () => {
     acceptingAnswers = true;
 };
 
+incrementScore = num => {
+    score += num;
+    scoreText.innerText = score;
+}
+
 choices.forEach(choice => {
     choice.addEventListener("click", e => {
         if (!acceptingAnswers) return;
@@ -78,6 +88,8 @@ choices.forEach(choice => {
             selectedAnswer == currentQuestion.answer
                 ? "correct"
                 : "incorrect";
+
+        classToApply === "correct" ? incrementScore(CORRECT_BONUS) : ""
 
         selectedChoice.parentElement.classList.add(classToApply); 
         setTimeout( () => {
