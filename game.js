@@ -1,7 +1,8 @@
 const question = document.getElementById("question");
 const choices = Array.from(document.getElementsByClassName("choice-text"));
-const questionCounterText = document.getElementById("questionCounter");
+const progressText = document.getElementById("progressText");
 const scoreText = document.getElementById("score");
+const progressBarFull = document.getElementById("progressBarFull")
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -56,7 +57,9 @@ getNewQuestion = () => {
     }
     questionCounter++;
 
-    questionCounterText.innerText = `${questionCounter}/${questions.length}`
+    progressText.innerText = `Question: ${questionCounter}/${questions.length}`
+    //update progressBarFull
+    progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`;
 
     const questionIndex = Math.floor(Math.random() * availableQuestions.length);
     currentQuestion = availableQuestions[questionIndex];
@@ -91,9 +94,9 @@ choices.forEach(choice => {
 
         classToApply === "correct" ? incrementScore(CORRECT_BONUS) : ""
 
-        selectedChoice.parentElement.classList.add(classToApply); 
-        setTimeout( () => {
-            selectedChoice.parentElement.classList.remove(classToApply); 
+        selectedChoice.parentElement.classList.add(classToApply);
+        setTimeout(() => {
+            selectedChoice.parentElement.classList.remove(classToApply);
             getNewQuestion();
         }, 1000)
     });
