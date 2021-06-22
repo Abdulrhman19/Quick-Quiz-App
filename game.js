@@ -3,6 +3,8 @@ const choices = Array.from(document.getElementsByClassName("choice-text"));
 const progressText = document.getElementById("progressText");
 const scoreText = document.getElementById("score");
 const progressBarFull = document.getElementById("progressBarFull")
+const loader = document.getElementById("loader");
+const game = document.getElementById("game");
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -12,11 +14,24 @@ let availableQuestions = [];
 
 let questions = [];
 
-fetch("questions.json").then(res => {
+fetch("https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple").then(res => {
     return res.json();
 }).then(loadedQuestions => {
-    console.log(loadedQuestions);
-    questions = loadedQuestions;
+    console.log(loadedQuestions.results);
+    questions = loadedQuestions.results.map(loadedQuestion => {
+        const formattedQuestion = {
+            question: loadedQuestion.question,
+        };
+
+        const answerChoices = [...loadedQuestion.incorrect_answers];
+        formattedQuestion.answer = Math.floor(Math.random() * 3) + 1;
+        answerChoices.splice(formattedQuestion.answer - 1, 0, loadedQuestion.correct_answer)
+        answerChoices.forEach((choice, index) => {
+            formattedQuestion["choice" + (index+1)] = choice;
+        })
+
+        return formattedQuestion;
+    });
     startGame();
 }).catch(err => {
     console.log(err);
@@ -33,6 +48,8 @@ startGame = () => {
     availableQuestions = [...questions];
     console.log(availableQuestions);
     getNewQuestion();
+    game.classList.remove("hidden");
+    loader.classList.add("hidden");
 };
 
 getNewQuestion = () => {
@@ -45,7 +62,7 @@ getNewQuestion = () => {
 
     progressText.innerText = `Question: ${questionCounter}/${questions.length}`
     //update progressBarFull
-    progressBarFull.style.width = `${(questionCounter / MAX_QUESTIONS) * 100}%`;
+    progressBarFull.style.width = `${(questionCounter / questions.length) * 100}%`;
 
     const questionIndex = Math.floor(Math.random() * availableQuestions.length);
     currentQuestion = availableQuestions[questionIndex];
