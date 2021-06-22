@@ -79,3 +79,12 @@
         transform: rotate(360deg);
     }
 }
+
+
+/* RESPONSIVENESS */
+@media all and (max-width:311px) {
+    #hud {
+        flex-direction: column;
+        margin-top: 15.9rem;
+    }
+}
